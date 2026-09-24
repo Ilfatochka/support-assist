@@ -1,0 +1,17 @@
+# Данные компании и переписка клиентов — не публикуются никогда.
+prompt*.md
+!prompt-example.md
+examples.json
+*journal*
+*журнал*
+*.rtf
+dumps/
+screenshots/
+
+# Ключи и локальные настройки
+.env
+*.key
+secrets*
+
+node_modules/
+.DS_Store

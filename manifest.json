@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Support Assist",
+  "version": "0.3.1",
+  "description": "Ассистент поддержки в CRM: читает обращение, готовит ответ по базе знаний, ставит действие и передаёт сложное человеку.",
+  "permissions": ["storage", "unlimitedStorage", "alarms", "tabs"],
+  "host_permissions": [
+    "https://crm.example.com/*",
+    "https://api.anthropic.com/*",
+    "https://api.deepinfra.com/*",
+    "https://api.telegram.org/*",
+    "https://files.example.com/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
+  ],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["https://crm.example.com/*"],
+      "js": ["page-hook.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://crm.example.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": { "default_popup": "options.html" }
+}

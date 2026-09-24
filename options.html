@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Support Assist — настройки</title>
+<style>
+  :root { color-scheme: dark; }
+  body { width: 440px; margin: 0; padding: 14px;
+    background: одно обращение1a; color: #e6e8eb;
+    font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  h1 { font-size: 11px; letter-spacing: .04em; text-transform: uppercase;
+    color: #9aa3ad; margin: 0 0 12px; font-weight: 400; }
+  h2 { font-size: 11px; letter-spacing: .04em; text-transform: uppercase;
+    color: #6ea8fe; margin: 20px 0 10px; font-weight: 400;
+    border-top: 1px solid #2b2f36; padding-top: 12px; }
+  label { display: block; margin-bottom: 4px; color: #9aa3ad; font-size: 11px; }
+  input, textarea, select { width: 100%; box-sizing: border-box; margin-bottom: 12px;
+    background: #0f1114; color: #e6e8eb; border: 1px solid одно обращение42;
+    border-radius: 6px; padding: 7px 9px; font: inherit; }
+  textarea { resize: vertical; }
+  button { background: одно обращение2c; color: #e6e8eb; border: 1px solid одно обращение42;
+    border-radius: 6px; padding: 8px 14px; font: inherit; cursor: pointer; }
+  button:hover { background: #2a2f38; }
+  button:focus-visible { outline: 2px solid #6ea8fe; outline-offset: 1px; }
+  .hint { color: #6b7480; font-size: 11px; margin: -8px 0 12px; }
+  .warn { color: #f0ad4e; }
+  #status { margin-left: 10px; color: #8ee6a8; }
+  #diag { white-space: pre-wrap; color: #9aa3ad; font-size: 11px;
+    margin-top: 12px; line-height: 1.5; }
+  .row { display: flex; gap: 8px; }
+  .row > div { flex: 1; }
+</style>
+</head>
+<body>
+  <h1>Support Assist</h1>
+
+  <h2>Где работает бот</h2>
+
+  <label for="project">Проект (вкладка бренда вверху CRM)</label>
+  <input id="project" placeholder="VPN">
+  <p class="hint">Бот работает только на этом проекте и пропускает обращения других. Вкладка заменила старый костыль «имя ровно "Клиент" = eSIM». Пусто — проверка выключена, чего лучше не делать.</p>
+
+  <label for="folders">Папки по приоритету, сверху вниз</label>
+  <textarea id="folders" rows="4" placeholder="Входящие вам&#10;Переданные вам&#10;Общие входящие"></textarea>
+  <p class="hint">По одной в строке. Порядок и есть приоритет: пока верхняя не пуста, до нижних дело не доходит. После каждого ответа бот возвращается к верхней — туда могло прилететь новое назначение лично вам, а срок у него идёт с момента поступления.<br><br>Названия пишите ровно как в CRM: «Входящие вам», «Переданные вам», «Общие входящие», «Просроченные», «Ночные». Папку «Общие» не указывайте — это лента событий команды, одно обращение попадает в неё по нескольку раз.</p>
+
+  <label for="myName">Ваше имя в CRM</label>
+  <input id="myName" placeholder="Имя">
+  <p class="hint">Как вы подписаны в исходящих сообщениях. Нужно, чтобы бот отличал себя от коллеги: закреплённый за другим сотрудником диалог забирать ответом нельзя — это правило CRM, а не наша осторожность.</p>
+
+  <div class="row">
+    <div>
+      <label for="shiftFrom">Смена с (МСК)</label>
+      <input id="shiftFrom" placeholder="08:00">
+    </div>
+    <div>
+      <label for="shiftTo">Смена до (МСК)</label>
+      <input id="shiftTo" placeholder="16:00">
+    </div>
+  </div>
+  <p class="hint">Вне этого окна бот не отвечает и не запускается по расписанию. По главе 05 в плановый конец смены выдача новых обращений прекращается; бот, продолжающий отвечать после закрытия смены, создаёт активность без подтверждённого выхода. Оба поля пусты — ограничение выключено.</p>
+
+  <h2>Ответы и сроки</h2>
+
+  <label for="escalateMode">Что делать при эскалации</label>
+  <select id="escalateMode">
+    <option value="hold">Придержать: короткий ответ клиенту + «Ответить и ждать»</option>
+    <option value="notify">Ничего не отправлять, прислать карточку в Telegram</option>
+    <option value="engineer">Отправить сообщение и передать инженеру</option>
+  </select>
+  <p class="hint">В прежней CRM эскалация была молчанием — диалог подбирал человек. В CRM молчание превращается в просрочку. «Передать инженеру» решает это, но грузит инженерную очередь: включайте, когда убедитесь, что бот эскалирует по делу. Технический разбор (симптом, что сделано, результат) уходит в Telegram в обоих режимах.</p>
+
+  <label for="holdText">Фразы при эскалации в режиме «Придержать»</label>
+  <textarea id="holdText" rows="4" placeholder="разбираюсь по вашему обращению, немного времени&#10;разбираюсь по вашему вопросу, нужно немного времени&#10;смотрю ваше обращение, немного времени&#10;разбираюсь, потребуется немного времени"></textarea>
+  <p class="hint">По одной в строке. Вариант выбирается по номеру обращения: подряд идущие клиенты получают разные фразы, а один и тот же клиент всегда одну. Пусто — берутся встроенные.<br><br>Ничего не обещайте конкретно: сроки бот не контролирует. И помните, что «Ответить и ждать» уводит обращение из «Нужен ответ» в «Ждём клиента» — таймер встанет, но и из очереди оно пропадёт. Разбирать его дальше вам по карточке из Telegram.</p>
+
+  <div class="row">
+    <div>
+      <label for="pauseMin">Пауза: от, секунд</label>
+      <input id="pauseMin" type="number" min="0" step="1" placeholder="8">
+    </div>
+    <div>
+      <label for="pauseMax">Пауза: до, секунд</label>
+      <input id="pauseMax" type="number" min="0" step="1" placeholder="30">
+    </div>
+  </div>
+  <p class="hint">В прежней CRM пауза была про правдоподобность: 30–120 секунд, чтобы бот не отвечал ровно каждые 12 секунд. Здесь у неё второй хозяин — таймер карточки: первый ответ 3/6 минут. Пауза автоматически урезается по остатку срока, так что длинные значения просто не отработают. Пусто — 8–30 секунд.</p>
+
+  <label for="closeTextOk">Фразы при закрытии — клиент подтвердил, что заработало</label>
+  <textarea id="closeTextOk" rows="4" placeholder="Отлично, что получилось. Если понадобится что-то ещё — пишите сюда.&#10;Хорошо, что заработало. Если снова понадобится помощь, напишите здесь.&#10;Рады, что решилось. Будут сложности — возвращайтесь в этот чат.&#10;Раз всё работает — закрываю обращение. Появятся вопросы, пишите."></textarea>
+  <p class="hint">Уходит только когда клиент прямо написал, что получилось или заработало.</p>
+
+  <label for="closeText">Фразы при закрытии — просто «спасибо», без подтверждения</label>
+  <textarea id="closeText" rows="5" placeholder="Отлично, что получилось. Если понадобится что-то ещё — пишите сюда.&#10;Тогда закрываю обращение. Будут сложности — возвращайтесь в этот чат.&#10;Хорошо, что заработало. Если снова понадобится помощь, напишите здесь.&#10;Готово. Появятся вопросы — пишите, разберёмся."></textarea>
+  <p class="hint warn">Здесь НЕЛЬЗЯ писать «рады, что заработало» и подобное. Однажды оценка ИИ разобрала одно обращение: клиент спросил про приложение в Google Play, получил ссылку и написал «Спасибо большое», а бот ответил «Хорошо, что заработало». Проверка записала: «фраза не опирается на сообщения клиента». Утверждать результат, которого в переписке нет, — прямое замечание к уместности.<br><br>Оба набора: вариант выбирается по номеру обращения, подряд идущие клиенты получают разные фразы. Пусто — берутся встроенные. Все без родовых окончаний: операторы разного пола, «рада была помочь» подойдёт не всем. Фразы пишет код, а не модель — токенов они не стоят.</p>
+
+  <label><input id="closeSilent" type="checkbox"> Закрывать совсем молча</label>
+  <p class="hint">Отменяет фразы выше: бот ставит «Решено · закрыть» или «Ответ не требуется» с пустым полем, клиенту не уходит ничего. CRM запишет решение в историю. Включайте, если увидите, что прощания раздражают.<br><br>Когда модель написала ответ по существу, он уходит в любом случае — глава 02 просит «коротко описать результат, а не только факт завершения».</p>
+
+  <label for="slaGuard">Запас до срока, секунд</label>
+  <input id="slaGuard" type="number" min="5" step="5" placeholder="45">
+  <p class="hint">Сколько секунд оставить на отправку и подтверждение доставки. Пусто — 45.</p>
+
+  <label for="sendWait">Сколько ждать подтверждения отправки, секунд</label>
+  <input id="sendWait" type="number" min="10" step="5" placeholder="30">
+  <p class="hint">После нажатия «Отправить» бот ждёт, пока реплика появится в ленте и CRM пометит её доставленной. За одну смену из 101 отправки 20 ушли с «доставка неизвестна», а 7 упали с «отправка не подтвердилась» — старого потолка в 9 секунд не хватало. Пусто — 30.<br><br>На быстрой отправке это ничего не стоит: бот выходит по первой же отметке. Повторно он не отправляет никогда — дубликат клиенту хуже, чем неизвестная доставка.</p>
+
+  <label><input id="useVpnPanel" type="checkbox" checked> Открывать «Управление VPN», когда нужен баланс</label>
+  <p class="hint">Панель грузится до минуты, поэтому открывается не всегда, а только когда ответ без баланса или тарифа не собирается. Выключите — такие обращения пойдут человеку. Менять из панели ничего нельзя, бот только читает.</p>
+
+  <label for="vpnTimeout">Сколько ждать панель VPN, секунд</label>
+  <input id="vpnTimeout" type="number" min="15" step="5" placeholder="75">
+  <p class="hint">Не дождались — обращение уходит человеку. Пусто — 75.</p>
+
+  <label for="dayLimit">Ответов в сутки</label>
+  <input id="dayLimit" type="number" min="0" step="10" placeholder="0">
+  <p class="hint">Важнее, чем было в прежней CRM: каждый ответ закрепляет обращение за вами, и дальше все его сроки — ваши персонально. 0 — без предела.</p>
+
+  <h2>База знаний и модель</h2>
+
+  <label for="systemPrompt">База знаний (промпт)</label>
+  <textarea id="systemPrompt" rows="8" placeholder="Вставьте содержимое prompt-for-chrome.md"></textarea>
+
+  <label for="minBlocks">Минимум блоков в базе</label>
+  <input id="minBlocks" type="number" min="0" step="10" placeholder="90">
+  <p class="hint warn">Сторож против обрезки промпта. Однажды в расширение попала только «голова» базы: из 105 блоков доехало 7, эскалации выросли с 6% до 28%, и на любую жалобу уходило пересоздание ключа. Меньше этого числа — бот встаёт и пишет в Telegram. 0 — проверка выключена.</p>
+
+  <label><input id="twoStep" type="checkbox" checked> Сначала тема, потом блок</label>
+  <p class="hint">Два запроса вместо одного: первый определяет тему, второй выбирает блок только из её раздела.</p>
+
+  <label><input id="useDeepInfra" type="checkbox"> Работать через DeepInfra</label>
+  <p class="hint">Все диалоги, включая скриншоты. Сбой провайдера — откат на Claude, не эскалация.</p>
+
+  <label for="diKey">Ключ DeepInfra</label>
+  <input id="diKey" type="password" placeholder="...">
+
+  <label for="diModel">Модель DeepInfra</label>
+  <input id="diModel" placeholder="google/gemma-4-31B-it-turbo">
+
+  <label for="apiKey">Ключ Anthropic API (запасной путь)</label>
+  <input id="apiKey" type="password" placeholder="sk-ant-...">
+  <p class="hint warn">Не заполнен — запасного пути нет. Однажды DeepInfra не отвечала, и 14 диалогов умерли молча с записью «запасной Claude: не указан API-ключ». Смысл запасного провайдера в том, что он настроен заранее.</p>
+
+  <label for="model">Модель Anthropic</label>
+  <select id="model">
+    <option value="claude-haiku-4-5-20251001">Haiku 4.5 — самая дешёвая и быстрая</option>
+    <option value="claude-sonnet-5">Sonnet 5 — баланс цены и качества</option>
+    <option value="claude-opus-5">Opus 5 — самая умная, дорогая</option>
+  </select>
+
+  <h2>Поведение</h2>
+
+  <label><input id="outage" type="checkbox"> Режим аварии</label>
+  <p class="hint">Работает, только если стоит галочка И заполнен текст ниже. Сам не сбрасывается.</p>
+
+  <label for="outageText">Текст объявления для клиентов</label>
+  <textarea id="outageText" rows="4" placeholder="Сейчас на магистральных узлах идут работы…"></textarea>
+
+  <label for="outageDays">Дней простоя для компенсации</label>
+  <input id="outageDays" type="number" min="0" step="1" placeholder="0">
+
+  <label for="knownIssues">Известные проблемы (по одной в строке)</label>
+  <textarea id="knownIssues" rows="4" placeholder="Gemini — периодически перестаёт работать"></textarea>
+  <p class="hint">По ним бот отвечает «знаем, работаем». Починили — уберите строку, иначе он продолжит обещать.</p>
+
+  <label for="stopWords">Стоп-слова (по одной фразе в строке)</label>
+  <textarea id="stopWords" rows="4" placeholder="обычно помогает&#10;как правило"></textarea>
+  <p class="hint">Ответ с такой фразой клиенту не уходит. Пусто — встроенный список.</p>
+
+  <label for="denyList">Кому бот не отвечает (по одному в строке)</label>
+  <textarea id="denyList" rows="4" placeholder="@nickname&#10;Mila"></textarea>
+  <p class="hint">Имя или его часть. Сюда же сам попадает тот, кто спросил «это бот?».</p>
+
+  <h2>Telegram</h2>
+
+  <label for="tgToken">Токен бота</label>
+  <input id="tgToken" type="password" placeholder="от @BotFather">
+
+  <label for="tgChatId">Chat id</label>
+  <input id="tgChatId" placeholder="от @userinfobot">
+
+  <label for="failAlert">Сигнал после N отказов подряд</label>
+  <input id="failAlert" type="number" min="0" step="1" placeholder="5">
+
+  <label><input id="tgControl" type="checkbox"> Управление из Telegram</label>
+  <p class="hint">Команды: /run [сколько], /stop, /status. Вкладка CRM должна быть открыта.</p>
+
+  <label><input id="heartbeat" type="checkbox"> Сигнал жизни раз в полчаса</label>
+  <label><input id="waitingPing" type="checkbox" checked> Напоминать про ожидающих</label>
+
+  <p>&nbsp;</p>
+  <button id="save">Сохранить</button>
+  <button id="check">Проверить Telegram</button><span id="status"></span>
+  <pre id="diag"></pre>
+
+  <script src="options.js"></script>
+</body>
+</html>
